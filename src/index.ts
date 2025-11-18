@@ -9,12 +9,20 @@ export { Calculator } from './utils/Calculator';
 export { Validator } from './utils/Validator';
 export { Logger, LogLevel, LogEntry } from './utils/Logger';
 export { Cache, CacheEntry, CacheOptions } from './utils/Cache';
+export { EventEmitter, EventListener, EventSubscription } from './utils/EventEmitter';
+export { RetryHandler, RetryOptions } from './utils/RetryHandler';
+export { RateLimiter, RateLimiterOptions } from './utils/RateLimiter';
+export { CircuitBreaker, CircuitBreakerOptions, CircuitState, CircuitBreakerError } from './utils/CircuitBreaker';
 
 // API
 export { ApiClient, ApiResponse, RequestConfig } from './api/ApiClient';
 
 // Database
 export { Database, QueryOptions, QueryResult } from './database/Database';
+
+// Monitoring
+export { HealthCheck, HealthStatus, HealthCheckResult, CheckResult, HealthCheckFunction } from './monitoring/HealthCheck';
+export { MetricsCollector, MetricValue, MetricSnapshot } from './monitoring/MetricsCollector';
 
 // Errors
 export {
