@@ -21,7 +21,7 @@ describe('User Workflow Integration Tests', () => {
     it('should handle complete user lifecycle', () => {
       // Create users
       const user1 = userService.createUser('john@example.com', 'John Doe', 25);
-      const user2 = userService.createUser('jane@example.com', 'Jane Smith', 30);
+      userService.createUser('jane@example.com', 'Jane Smith', 30);
       const user3 = userService.createUser('bob@example.com', 'Bob Johnson', 17);
 
       // Verify user creation

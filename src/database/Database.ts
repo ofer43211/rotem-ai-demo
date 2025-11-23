@@ -243,7 +243,7 @@ export class Database {
 
       if (aValue === bValue) return 0;
 
-      const comparison = aValue < bValue ? -1 : 1;
+      const comparison = (aValue as number | string) < (bValue as number | string) ? -1 : 1;
       return direction === 'ASC' ? comparison : -comparison;
     });
   }

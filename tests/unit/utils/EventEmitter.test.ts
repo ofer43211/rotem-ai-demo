@@ -35,8 +35,8 @@ describe('EventEmitter', () => {
   test('should support multiple listeners', async () => {
     const results: number[] = [];
 
-    emitter.on('test', (n: number) => results.push(n * 2));
-    emitter.on('test', (n: number) => results.push(n * 3));
+    emitter.on('test', (n: number) => { results.push(n * 2); });
+    emitter.on('test', (n: number) => { results.push(n * 3); });
 
     await emitter.emit('test', 5);
 
@@ -45,7 +45,7 @@ describe('EventEmitter', () => {
 
   test('should unsubscribe correctly', async () => {
     let count = 0;
-    const listener = () => count++;
+    const listener = () => { count++; };
 
     emitter.on('test', listener);
     await emitter.emit('test', null);
@@ -83,8 +83,8 @@ describe('EventEmitter', () => {
   test('should remove all listeners', async () => {
     let count = 0;
 
-    emitter.on('test', () => count++);
-    emitter.on('test', () => count++);
+    emitter.on('test', () => { count++; });
+    emitter.on('test', () => { count++; });
 
     emitter.removeAllListeners('test');
     await emitter.emit('test', null);
