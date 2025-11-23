@@ -172,6 +172,19 @@ describe('Validator', () => {
       expect(validator.isEmpty({ key: 'value' })).toBe(false);
       expect(validator.isEmpty({ a: undefined })).toBe(false);
     });
+
+    it('should return false for non-standard types', () => {
+      // Test with types that don't match string, array, object, null, or undefined
+      // These should hit the default return false case (line 56)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(validator.isEmpty(42 as any)).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(validator.isEmpty(true as any)).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(validator.isEmpty(false as any)).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(validator.isEmpty((() => {}) as any)).toBe(false);
+    });
   });
 
   describe('isCreditCard', () => {

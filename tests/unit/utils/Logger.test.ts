@@ -162,12 +162,18 @@ describe('Logger', () => {
       const smallLogger = Logger.getInstance();
       smallLogger.clearLogs();
 
-      // Log more than max (default is 1000, but we'll test the concept)
-      for (let i = 0; i < 10; i++) {
+      // Log more than max (default is 1000) to trigger shift
+      for (let i = 0; i < 1005; i++) {
         smallLogger.info(`Message ${i}`);
       }
 
-      expect(smallLogger.getLogCount()).toBeLessThanOrEqual(1000);
+      // Should maintain exactly 1000 logs
+      expect(smallLogger.getLogCount()).toBe(1000);
+
+      // First log should be removed (logs 0-4 should be gone)
+      const logs = smallLogger.getLogs();
+      expect(logs[0].message).toBe('Message 5');
+      expect(logs[logs.length - 1].message).toBe('Message 1004');
     });
   });
 
