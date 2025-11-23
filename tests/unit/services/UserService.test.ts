@@ -176,7 +176,7 @@ describe('UserService', () => {
     });
 
     it('should throw error for duplicate email', () => {
-      const user2 = userService.createUser('other@example.com', 'Other User', 30);
+      userService.createUser('other@example.com', 'Other User', 30);
 
       expect(() => userService.updateUser(userId, { email: 'other@example.com' })).toThrow(
         'Another user with this email already exists',

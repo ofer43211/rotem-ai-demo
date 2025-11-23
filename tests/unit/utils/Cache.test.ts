@@ -291,6 +291,22 @@ describe('Cache', () => {
 
       expect(shortCache.touch('key1')).toBe(false);
     });
+
+    it('should use default TTL when no TTL parameter provided', async () => {
+      const cache = new Cache<string>({ ttl: 200 });
+      cache.set('key1', 'value1', 100);
+
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      // Touch without TTL parameter - should use default TTL (200ms)
+      const touched = cache.touch('key1');
+      expect(touched).toBe(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Should still exist because we refreshed with 200ms TTL
+      expect(cache.get('key1')).toBe('value1');
+    });
   });
 
   describe('Type safety', () => {
@@ -302,6 +318,69 @@ describe('Cache', () => {
       const objectCache = new Cache<{ name: string }>();
       objectCache.set('key1', { name: 'test' });
       expect(objectCache.get('key1')).toEqual({ name: 'test' });
+    });
+  });
+
+  describe('Cleanup expired entries', () => {
+    it('should cleanup expired entries when calling size()', async () => {
+      const shortCache = new Cache<string>({ ttl: 100 });
+      shortCache.set('key1', 'value1');
+      shortCache.set('key2', 'value2');
+      shortCache.set('key3', 'value3');
+
+      expect(shortCache.size()).toBe(3);
+
+      // Wait for expiration
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // size() should trigger cleanup
+      expect(shortCache.size()).toBe(0);
+    });
+
+    it('should cleanup expired entries when calling keys()', async () => {
+      const shortCache = new Cache<string>({ ttl: 100 });
+      shortCache.set('expired1', 'value1');
+      shortCache.set('expired2', 'value2');
+
+      expect(shortCache.keys()).toHaveLength(2);
+
+      // Wait for expiration
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // keys() should trigger cleanup
+      expect(shortCache.keys()).toHaveLength(0);
+    });
+
+    it('should cleanup expired entries when calling values()', async () => {
+      const shortCache = new Cache<string>({ ttl: 100 });
+      shortCache.set('key1', 'value1');
+      shortCache.set('key2', 'value2');
+
+      expect(shortCache.values()).toHaveLength(2);
+
+      // Wait for expiration
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // values() should trigger cleanup
+      expect(shortCache.values()).toHaveLength(0);
+    });
+
+    it('should cleanup multiple expired entries at once', async () => {
+      const shortCache = new Cache<string>({ ttl: 50 });
+
+      // Add multiple entries
+      for (let i = 0; i < 10; i++) {
+        shortCache.set(`key${i}`, `value${i}`);
+      }
+
+      expect(shortCache.size()).toBe(10);
+
+      // Wait for all to expire
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Cleanup should remove all expired entries
+      const remaining = shortCache.keys();
+      expect(remaining).toHaveLength(0);
     });
   });
 });
