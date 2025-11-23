@@ -5,7 +5,6 @@
  */
 
 import {
-  User,
   UserService,
   Calculator,
   Validator,
@@ -27,7 +26,7 @@ async function userManagementExample(): Promise<void> {
 
   // Create users
   const user1 = userService.createUser('john@example.com', 'John Doe', 30);
-  const user2 = userService.createUser('jane@example.com', 'Jane Smith', 25);
+  userService.createUser('jane@example.com', 'Jane Smith', 25);
 
   console.log(`Created user: ${user1.getDisplayName()}`);
   console.log(`Is adult: ${user1.isAdult()}`);
@@ -94,11 +93,11 @@ function validationExample(): void {
     console.log(`${email}: ${validator.isEmail(email) ? '✓ Valid' : '✗ Invalid'}`);
   });
 
-  // Password strength
+  // Password strength (never log actual passwords - security best practice)
   const passwords = ['weak', 'StrongPass123!', 'NoNumber!'];
-  passwords.forEach((password) => {
+  passwords.forEach((password, idx) => {
     console.log(
-      `${password}: ${validator.isStrongPassword(password) ? '✓ Strong' : '✗ Weak'}`,
+      `Password #${idx + 1}: ${validator.isStrongPassword(password) ? '✓ Strong' : '✗ Weak'}`,
     );
   });
 

@@ -1,6 +1,11 @@
 export class Validator {
   public isEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Prevent ReDoS: limit input length and use optimized regex
+    if (email.length > 320) {
+      return false; // Email max length per RFC 5321
+    }
+    // Simplified regex without catastrophic backtracking
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     return emailRegex.test(email);
   }
 

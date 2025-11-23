@@ -164,11 +164,23 @@ export class CircuitBreaker {
    * Execute with timeout
    */
   private async executeWithTimeout<T>(fn: () => Promise<T>): Promise<T> {
-    return Promise.race([
-      fn(),
-      new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error('Operation timeout')), this.timeout),
-      ),
-    ]);
+    let timeoutId: NodeJS.Timeout | undefined;
+
+    const timeoutPromise = new Promise<T>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('Operation timeout')), this.timeout);
+    });
+
+    try {
+      const result = await Promise.race([fn(), timeoutPromise]);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      return result;
+    } catch (error) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      throw error;
+    }
   }
 }
