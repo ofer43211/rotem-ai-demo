@@ -232,5 +232,25 @@ describe('MetricsCollector', () => {
       expect(metrics.getCounter('requests', { method: 'POST', path: '/users' })).toBe(1);
       expect(metrics.getCounter('requests', { method: 'GET', path: '/posts' })).toBe(1);
     });
+
+    test('should handle getAllMetrics with labeled metrics', () => {
+      // Create metrics with various labels
+      metrics.incrementCounter('http_requests', 5, { method: 'GET', status: '200' });
+      metrics.incrementCounter('http_requests', 3, { method: 'POST', status: '201' });
+      metrics.setGauge('memory_usage', 75, { region: 'us-east-1' });
+      metrics.recordHistogram('request_duration', 150, { endpoint: '/api/users' });
+      metrics.recordHistogram('request_duration', 200, { endpoint: '/api/posts' });
+
+      const all = metrics.getAllMetrics();
+
+      expect(all.counters).toBeDefined();
+      expect(all.gauges).toBeDefined();
+      expect(all.histograms).toBeDefined();
+
+      // Verify labeled metrics are present
+      expect(Object.keys(all.counters).length).toBeGreaterThan(0);
+      expect(Object.keys(all.gauges).length).toBeGreaterThan(0);
+      expect(Object.keys(all.histograms).length).toBeGreaterThan(0);
+    });
   });
 });
